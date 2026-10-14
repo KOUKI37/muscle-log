@@ -190,7 +190,7 @@ export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle
     );
   }
 
-  function copyPreviousSets(exerciseKey: string, sets: { weight: number; reps: number }[]) {
+  function copyPreviousSets(exerciseKey: string, sets: { weight: number | null; reps: number | null }[]) {
     const apply = () => {
       setExercises((prev) =>
         prev.map((ex) =>
@@ -382,7 +382,7 @@ function ExerciseCard({
   onChangeSet: (setKey: string, patch: Partial<DraftSet>) => void;
   onRemoveSet: (setKey: string) => void;
   onAddSet: () => void;
-  onCopyPreviousSets: (sets: { weight: number; reps: number }[]) => void;
+  onCopyPreviousSets: (sets: { weight: number | null; reps: number | null }[]) => void;
 }) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
