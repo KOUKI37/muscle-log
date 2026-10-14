@@ -1,5 +1,5 @@
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { useEffect, useMemo, useState } from 'react';
+import { createElement, useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -88,6 +88,10 @@ export default function WorkoutForm({ initial, banner, submitLabel, onSubmit }: 
   const [showCalendar, setShowCalendar] = useState(false);
 
   function openDatePicker() {
+    if (Platform.OS === 'web') {
+      // Web は下の <input type="date"> がタップを直接受けるので、ここでは何もしない
+      return;
+    }
     if (Platform.OS === 'android') {
       // Android はダイアログ形式。開いたその場で完結し、コンポーネントの表示状態は不要
       DateTimePickerAndroid.open({
@@ -255,6 +259,24 @@ export default function WorkoutForm({ initial, banner, submitLabel, onSubmit }: 
           <Pressable style={styles.dateLabelWrap} onPress={openDatePicker}>
             <Text style={styles.dateLabel}>{formatDateJa(date)}</Text>
             <Text style={styles.dateHint}>タップして日付を選択</Text>
+            {Platform.OS === 'web'
+              ? // datetimepicker は Web では何も描画しないため、ブラウザ標準の日付入力を透明にして重ねる
+                createElement('input', {
+                  type: 'date',
+                  value: date,
+                  onChange: (e: { target: { value: string } }) => {
+                    if (e.target.value) setDate(e.target.value);
+                  },
+                  onClick: (e: { currentTarget: { showPicker?: () => void } }) => {
+                    try {
+                      e.currentTarget.showPicker?.();
+                    } catch {
+                      // showPicker 非対応のブラウザでは標準の挙動に任せる
+                    }
+                  },
+                  style: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' },
+                })
+              : null}
           </Pressable>
           <Pressable style={styles.dateArrow} onPress={() => setDate((d) => shiftDateString(d, 1))} hitSlop={8}>
             <Text style={styles.dateArrowText}>▶</Text>
