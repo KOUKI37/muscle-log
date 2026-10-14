@@ -68,19 +68,6 @@ muscle-log は、日々のトレーニング内容（種目・重量・レップ
 
 ---
 
-## スクリーンショット
-
-| ホーム（履歴一覧） | 記録の入力 |
-|---|---|
-| ![ホーム画面](docs/screenshots/home.png) | ![記録の入力画面](docs/screenshots/input.png) |
-
-| トレーニング詳細 | 前回コピー |
-|---|---|
-| ![詳細画面](docs/screenshots/detail.png) | ![前回コピー](docs/screenshots/copy.png) |
-
-> 画像は [`docs/screenshots/`](docs/screenshots/) に配置すると表示される。配置方法は同フォルダの README を参照。
-
----
 
 ## 使用技術
 
