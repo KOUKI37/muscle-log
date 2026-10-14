@@ -32,8 +32,8 @@ export const setEntries = sqliteTable('set_entry', {
   exerciseEntryId: integer('exercise_entry_id')
     .notNull()
     .references(() => exerciseEntries.id, { onDelete: 'cascade' }),
-  weight: real('weight').notNull(),
-  reps: integer('reps').notNull(),
+  weight: real('weight'),
+  reps: integer('reps'),
   setNumber: integer('set_number').notNull(),
 });
 

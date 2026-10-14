@@ -11,6 +11,11 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { confirmAsync } from '../../src/utils/alert';
 import { formatDateJa } from '../../src/utils/date';
 
+/** 未入力（null / NaN）でなければ true。画面に「null」「NaN」を出さないための判定 */
+function hasValue(n: number | null | undefined): n is number {
+  return n != null && !Number.isNaN(n);
+}
+
 /**
  * トレーニング詳細画面。
  * ファイル名の [id] は「ここは可変」という意味。/workout/1 でも /workout/42 でもこの画面が開き、
@@ -69,9 +74,10 @@ export default function WorkoutDetailScreen() {
                   <View key={set.id} style={styles.setRow}>
                     <Text style={styles.setNumber}>{set.setNumber}</Text>
                     <Text style={styles.setValue}>
-                      {set.weight}
-                      <Text style={styles.setUnit}>kg</Text> × {set.reps}
-                      <Text style={styles.setUnit}>回</Text>
+                      {hasValue(set.weight) ? set.weight : '-'}
+                      {hasValue(set.weight) ? <Text style={styles.setUnit}>kg</Text> : null} ×{' '}
+                      {hasValue(set.reps) ? set.reps : '-'}
+                      {hasValue(set.reps) ? <Text style={styles.setUnit}>回</Text> : null}
                     </Text>
                   </View>
                 ))}

@@ -15,6 +15,13 @@
       "when": 1786067099737,
       "tag": "0001_groovy_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791940829780,
+      "tag": "0002_sleepy_morlun",
+      "breakpoints": true
     }
   ]
 }

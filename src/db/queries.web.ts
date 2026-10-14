@@ -26,8 +26,8 @@ export type NewWorkout = { date: string };
 export type ExerciseEntry = { id: number; workoutId: number; name: string; order: number; memo: string | null };
 export type NewExerciseEntry = { workoutId: number; name: string; order: number; memo?: string | null };
 
-export type SetEntry = { id: number; exerciseEntryId: number; weight: number; reps: number; setNumber: number };
-export type NewSetEntry = { exerciseEntryId: number; weight: number; reps: number; setNumber: number };
+export type SetEntry = { id: number; exerciseEntryId: number; weight: number | null; reps: number | null; setNumber: number };
+export type NewSetEntry = { exerciseEntryId: number; weight: number | null; reps: number | null; setNumber: number };
 
 export type WorkoutWithDetails = Workout & {
   exerciseEntries: (ExerciseEntry & { sets: SetEntry[] })[];
@@ -36,14 +36,14 @@ export type WorkoutWithDetails = Workout & {
 export type ExerciseDraft = {
   name: string;
   memo: string | null;
-  sets: { weight: number; reps: number }[];
+  sets: { weight: number | null; reps: number | null }[];
 };
 
 export type NextExerciseSuggestion = { name: string; count: number };
 
 export type ExercisePerformance = {
   date: string;
-  sets: { weight: number; reps: number }[];
+  sets: { weight: number | null; reps: number | null }[];
 };
 
 // ---- 保存の実体 -----------------------------------------------------------
@@ -305,8 +305,8 @@ export async function listSetEntries(exerciseEntryId: number): Promise<SetEntry[
 
 export async function createSetEntry(input: {
   exerciseEntryId: number;
-  weight: number;
-  reps: number;
+  weight: number | null;
+  reps: number | null;
   setNumber: number;
 }): Promise<SetEntry> {
   const store = await loadStore();
@@ -318,7 +318,7 @@ export async function createSetEntry(input: {
 
 export async function updateSetEntry(
   id: number,
-  input: Partial<{ weight: number; reps: number; setNumber: number }>
+  input: Partial<{ weight: number | null; reps: number | null; setNumber: number }>
 ): Promise<SetEntry | undefined> {
   const store = await loadStore();
   const set = store.setEntries.find((s) => s.id === id);

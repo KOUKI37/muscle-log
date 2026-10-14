@@ -86,7 +86,7 @@ export async function deleteWorkout(id: number): Promise<void> {
 export type ExerciseDraft = {
   name: string;
   memo: string | null;
-  sets: { weight: number; reps: number }[];
+  sets: { weight: number | null; reps: number | null }[];
 };
 
 /**
@@ -185,7 +185,7 @@ export async function listNextExerciseSuggestions(afterName: string, limit = 5):
 
 export type ExercisePerformance = {
   date: string;
-  sets: { weight: number; reps: number }[];
+  sets: { weight: number | null; reps: number | null }[];
 };
 
 /**
@@ -263,8 +263,8 @@ export async function listSetEntries(exerciseEntryId: number): Promise<SetEntry[
 /** 種目にセットを1つ追加する */
 export async function createSetEntry(input: {
   exerciseEntryId: number;
-  weight: number;
-  reps: number;
+  weight: number | null;
+  reps: number | null;
   setNumber: number;
 }): Promise<SetEntry> {
   const [row] = await db.insert(setEntries).values(input).returning();
@@ -274,7 +274,7 @@ export async function createSetEntry(input: {
 /** セットの重量・レップ数・セット番号を更新する */
 export async function updateSetEntry(
   id: number,
-  input: Partial<{ weight: number; reps: number; setNumber: number }>
+  input: Partial<{ weight: number | null; reps: number | null; setNumber: number }>
 ): Promise<SetEntry | undefined> {
   const [row] = await db.update(setEntries).set(input).where(eq(setEntries.id, id)).returning();
   return row;

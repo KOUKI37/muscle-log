@@ -22,6 +22,7 @@ import {
 import type { ThemeColors } from '../theme/colors';
 import { useTheme } from '../theme/ThemeProvider';
 import { confirmAsync, showAlert } from '../utils/alert';
+import { formatSet, numberToInput, parseOptionalNumber } from '../utils/format';
 import { formatDateJa, shiftDateString, toDateString, todayString } from '../utils/date';
 import Button from './Button';
 import Card from './Card';
@@ -74,7 +75,7 @@ function draftExercisesFromInitial(initial: WorkoutFormInitial | undefined): Dra
     key: makeKey(),
     name: ex.name,
     memo: ex.memo ?? '',
-    sets: ex.sets.length > 0 ? ex.sets.map((s) => ({ key: makeKey(), weight: String(s.weight), reps: String(s.reps) })) : [emptySet()],
+    sets: ex.sets.length > 0 ? ex.sets.map((s) => ({ key: makeKey(), weight: numberToInput(s.weight), reps: numberToInput(s.reps) })) : [emptySet()],
   }));
 }
 
@@ -195,7 +196,7 @@ export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle
         prev.map((ex) =>
           ex.key !== exerciseKey
             ? ex
-            : { ...ex, sets: sets.map((s) => ({ key: makeKey(), weight: String(s.weight), reps: String(s.reps) })) }
+            : { ...ex, sets: sets.map((s) => ({ key: makeKey(), weight: numberToInput(s.weight), reps: numberToInput(s.reps) })) }
         )
       );
     };
@@ -217,18 +218,25 @@ export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle
   }
 
   async function handleSave() {
-    const cleaned: ExerciseDraft[] = exercises
-      .map((ex) => ({
-        name: ex.name.trim(),
-        memo: ex.memo.trim() === '' ? null : ex.memo.trim(),
-        sets: ex.sets
-          .map((s) => ({ weight: Number(s.weight) || 0, reps: Math.trunc(Number(s.reps)) || 0 }))
-          .filter((s) => s.reps > 0),
-      }))
-      .filter((ex) => ex.name !== '' && ex.sets.length > 0);
+    // 空欄は「未入力」(null) として扱う。重量・回数はどちらか片方だけでもよく、
+    // 両方とも空のセットだけを捨てる。
+    const parsed = exercises.map((ex) => ({
+      name: ex.name.trim(),
+      memo: ex.memo.trim() === '' ? null : ex.memo.trim(),
+      sets: ex.sets
+        .map((s) => ({ weight: parseOptionalNumber(s.weight), reps: parseOptionalNumber(s.reps, true) }))
+        .filter((s) => s.weight !== null || s.reps !== null),
+    }));
+
+    if (parsed.some((ex) => ex.name === '' && ex.sets.length > 0)) {
+      showAlert('保存できません', '重量や回数を入力した種目には、種目名も入力してください。');
+      return;
+    }
+
+    const cleaned: ExerciseDraft[] = parsed.filter((ex) => ex.name !== '');
 
     if (cleaned.length === 0) {
-      showAlert('保存できません', '種目名と、レップ数を入力したセットを1つ以上入力してください。');
+      showAlert('保存できません', '種目名を1つ以上入力してください。');
       return;
     }
 
@@ -427,7 +435,7 @@ function ExerciseCard({
         <View style={styles.previousBlock}>
           <Text style={styles.previousCaption}>前回（{formatDateJa(previousPerformance!.date)}）</Text>
           <Text style={styles.previousValues}>
-            {previousPerformance!.sets.map((s) => `${s.weight}kg×${s.reps}回`).join('、')}
+            {previousPerformance!.sets.map((s) => formatSet(s)).join('、')}
           </Text>
           <Pressable
             style={({ pressed }) => [styles.previousCopyButton, pressed && styles.pressed]}
