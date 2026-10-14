@@ -46,7 +46,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(STORAGE_KEY, next);
   }
 
-  const scheme: 'light' | 'dark' = preference === 'system' ? (systemScheme ?? 'light') : preference;
+  const scheme: 'light' | 'dark' = preference === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : preference;
   const colors = scheme === 'dark' ? darkColors : lightColors;
 
   const value = useMemo<ThemeContextValue>(
