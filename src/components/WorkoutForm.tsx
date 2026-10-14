@@ -52,6 +52,8 @@ type Props = {
   /** 保存ボタンを押したときの確認ダイアログの文言（例: 「保存しますか？」「保存」） */
   confirmTitle: string;
   confirmLabel: string;
+  /** true なら日付を表示だけして変更させない（編集画面用） */
+  lockDate?: boolean;
   onSubmit: (input: { date: string; exercises: ExerciseDraft[] }) => Promise<void>;
 };
 
@@ -79,7 +81,7 @@ function draftExercisesFromInitial(initial: WorkoutFormInitial | undefined): Dra
   }));
 }
 
-export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle, confirmLabel, onSubmit }: Props) {
+export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle, confirmLabel, lockDate, onSubmit }: Props) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -267,6 +269,14 @@ export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle
           </View>
         ) : null}
 
+        {lockDate ? (
+          <View style={styles.dateRow}>
+            <View style={styles.dateLabelWrap}>
+              <Text style={styles.dateLabel}>{formatDateJa(date)}</Text>
+              <Text style={styles.dateLockedHint}>日付は変更できません</Text>
+            </View>
+          </View>
+        ) : (
         <View style={styles.dateRow}>
           <Pressable style={styles.dateArrow} onPress={() => setDate((d) => shiftDateString(d, -1))} hitSlop={8}>
             <Text style={styles.dateArrowText}>◀</Text>
@@ -297,8 +307,9 @@ export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle
             <Text style={styles.dateArrowText}>▶</Text>
           </Pressable>
         </View>
+        )}
 
-        {Platform.OS === 'ios' && showCalendar ? (
+        {!lockDate && Platform.OS === 'ios' && showCalendar ? (
           <View style={styles.calendarWrap}>
             <DateTimePicker
               value={new Date(`${date}T00:00:00`)}
@@ -549,6 +560,10 @@ function createStyles(colors: ThemeColors) {
       fontSize: 17,
       fontWeight: '800',
       color: colors.text,
+    },
+    dateLockedHint: {
+      fontSize: 11,
+      color: colors.textMuted,
     },
     dateHint: {
       fontSize: 11,

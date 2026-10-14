@@ -44,6 +44,7 @@ export default function EditWorkoutScreen() {
       submitLabel="更新する"
       confirmTitle="更新しますか？"
       confirmLabel="更新"
+      lockDate
       onSubmit={async (input) => {
         await updateWorkoutWithDetails(workoutId, input);
         router.back();
