@@ -616,13 +616,15 @@ function createStyles(colors: ThemeColors) {
       textAlign: 'center',
     },
     setNumberCol: {
-      width: 40,
+      width: 32,
     },
+    // minWidth: 0 がないと、TextInput が持つ固有の最小幅のせいで flex が縮まず、画面右にはみ出す
     setInputCol: {
       flex: 1,
+      minWidth: 0,
     },
     setRemoveCol: {
-      width: 28,
+      width: 24,
       alignItems: 'center',
     },
     setRow: {
@@ -638,6 +640,7 @@ function createStyles(colors: ThemeColors) {
     setInput: {
       backgroundColor: colors.background,
       textAlign: 'center',
+      paddingHorizontal: 8,
     },
     removeSetText: {
       fontSize: 16,
