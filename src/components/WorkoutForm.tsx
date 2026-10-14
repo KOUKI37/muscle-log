@@ -48,6 +48,9 @@ type Props = {
   /** フォーム上部に出す案内文（例: 「複製元」の説明）。不要なら省略する */
   banner?: string;
   submitLabel: string;
+  /** 保存ボタンを押したときの確認ダイアログの文言（例: 「保存しますか？」「保存」） */
+  confirmTitle: string;
+  confirmLabel: string;
   onSubmit: (input: { date: string; exercises: ExerciseDraft[] }) => Promise<void>;
 };
 
@@ -75,7 +78,7 @@ function draftExercisesFromInitial(initial: WorkoutFormInitial | undefined): Dra
   }));
 }
 
-export default function WorkoutForm({ initial, banner, submitLabel, onSubmit }: Props) {
+export default function WorkoutForm({ initial, banner, submitLabel, confirmTitle, confirmLabel, onSubmit }: Props) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -228,6 +231,10 @@ export default function WorkoutForm({ initial, banner, submitLabel, onSubmit }: 
       showAlert('保存できません', '種目名と、レップ数を入力したセットを1つ以上入力してください。');
       return;
     }
+
+    // キャンセルした場合は何も変えずに戻る（入力内容は state にそのまま残る）
+    const confirmed = await confirmAsync(confirmTitle, '', confirmLabel, false);
+    if (!confirmed) return;
 
     setSaving(true);
     try {

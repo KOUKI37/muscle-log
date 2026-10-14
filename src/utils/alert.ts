@@ -16,17 +16,22 @@ export function showAlert(title: string, message?: string): void {
 }
 
 /** 「キャンセル / 実行」の2択確認ダイアログ。選んだ結果を Promise で返す。 */
-export function confirmAsync(title: string, message: string, confirmLabel: string): Promise<boolean> {
+export function confirmAsync(
+  title: string,
+  message: string,
+  confirmLabel: string,
+  destructive = true
+): Promise<boolean> {
   if (Platform.OS === 'web') {
-    return Promise.resolve(window.confirm(`${title}\n\n${message}`));
+    return Promise.resolve(window.confirm(message ? `${title}\n\n${message}` : title));
   }
   return new Promise((resolve) => {
     Alert.alert(
       title,
-      message,
+      message || undefined,
       [
         { text: 'キャンセル', style: 'cancel', onPress: () => resolve(false) },
-        { text: confirmLabel, style: 'destructive', onPress: () => resolve(true) },
+        { text: confirmLabel, style: destructive ? 'destructive' : 'default', onPress: () => resolve(true) },
       ],
       { cancelable: true, onDismiss: () => resolve(false) }
     );

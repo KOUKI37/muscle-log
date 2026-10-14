@@ -50,6 +50,8 @@ export default function NewWorkoutScreen() {
       initial={initial}
       banner={banner}
       submitLabel="保存する"
+      confirmTitle="保存しますか？"
+      confirmLabel="保存"
       onSubmit={async (input) => {
         const newId = await createWorkoutWithDetails(input);
         // 履歴の一覧やコピー元の詳細画面ではなく、今保存したばかりの記録を直接表示する

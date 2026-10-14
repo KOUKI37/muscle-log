@@ -42,6 +42,8 @@ export default function EditWorkoutScreen() {
     <WorkoutForm
       initial={initial}
       submitLabel="更新する"
+      confirmTitle="更新しますか？"
+      confirmLabel="更新"
       onSubmit={async (input) => {
         await updateWorkoutWithDetails(workoutId, input);
         router.back();
